@@ -1,0 +1,278 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #f4f7fb, #e6e9ef);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .container:hover {
+    transform: translateY(-5px);
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    color: #2c3e50;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+  
+  h1:hover {
+    color: #3498db;
+  }
+  
+  .uploadSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .uploadSection input {
+    width: 80%;
+    padding: 15px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+  }
+  
+  .uploadSection input:focus {
+    border-color: #2980b9;
+    outline: none;
+  }
+
+  .button1 {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #3498db;
+    margin-left: 10px;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    max-width: 600px;
+    width: 80%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    max-width: 600px;
+    width: 80%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
+  
+  .button:hover:not(:disabled) {
+    background-color: #2980b9;
+    transform: scale(1.05);
+  }
+  
+  .status {
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+    color: #7f8c8d;
+  }
+  
+  .status.error {
+    color: #e74c3c;
+  }
+  
+  .dataAnalysis {
+    margin-bottom: 40px;
+  }
+  
+  .dataAnalysis h3 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .domainSelector {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .select {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: background-color 0.3s ease;
+  }
+  
+  .select:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .loadingMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #f39c12;
+  }
+  
+  .insightsSection {
+    margin-bottom: 40px;
+  }
+  
+  .insightsSection h3 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  
+  .insightsList {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .insightsList li {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .insightsList li:hover {
+    transform: translateY(-5px);
+    background-color: #dfe6e9;
+  }
+  
+  .visualizationsSection {
+    margin-bottom: 40px;
+  }
+  
+  .visualizationsSection h3 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  
+  .visualizationsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+    gap: 30px;
+    transition: grid-template-columns 0.3s ease;
+  }
+  
+  .visualizationCard {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .visualizationCard:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+  }
+  
+  .visualization {
+    width: 100%;
+    height: 450px;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .visualizationCard img {
+    border-radius: 10px;
+    max-height: 400px;
+  }
+  
+  .visualizationCard img:hover {
+    transform: scale(1.05);
+  }
+  
+  .visualizationGrid {
+    margin-top: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+  
+    .header h1 {
+      font-size: 28px;
+    }
+  
+    .uploadSection input,
+    .button,
+    .select {
+      width: 90%;
+      padding: 12px;
+      font-size: 14px;
+    }
+  
+    .insightsList li {
+      font-size: 14px;
+    }
+  
+    .visualization {
+      height: 300px;
+    }
+  
+    .visualizationCard {
+      padding: 20px;
+    }
+  
+    .visualizationsGrid {
+      grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+  }
+  
