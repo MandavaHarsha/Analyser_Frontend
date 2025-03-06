@@ -119,3 +119,15 @@ domains:
       - [vehicle_id, route]
       - [distance, fuel]
       - [station, fare]
+  Media:
+    keywords:
+      - alertname
+      - instance
+      - Timestamp
+      - description
+      - state
+      - endpoint
+      - app
+      - env
+      - severity
+   
