@@ -39,26 +39,47 @@ const handleFileUpload = async () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    if (response.data.columns) {
+    // Log the entire response for debugging
+    console.log('Complete response data:', response.data);
+    
+    // Check what properties are available
+    console.log('Response has columns?', Boolean(response.data.columns));
+    console.log('Response has detected_domain?', Boolean(response.data.detected_domain));
+    console.log('Detected domain value:', response.data.detected_domain);
+
+    if (response.data.columns && response.data.detected_domain) {
       setColumns(response.data.columns);
-      // Ensure a domain is always set, defaulting to 'others' if none provided
-      const domain = response.data.detected_domain || 'others';
-      setDetectedDomain(domain);
+      setDetectedDomain(response.data.detected_domain);
       setAvailableDomains(response.data.all_domains || []);
-      setSelectedDomain(domain);
+      setSelectedDomain(response.data.detected_domain);
       setData(response.data.data);
       console.log('Detected Columns:', response.data.columns);
-      // Add logging for domain detection
-      console.log('Detected Domain:', domain);
-      console.log('Domain Scores:', response.data.domain_scores);
+      console.log('Selected Domain:', response.data.detected_domain);
       setUploadStatus('File uploaded successfully!');
     } else {
-      setUploadStatus('Error: No columns detected in file');
-      console.error('No columns in response:', response.data);
+      console.error('Missing expected data in response:', {
+        hasColumns: Boolean(response.data.columns),
+        hasDetectedDomain: Boolean(response.data.detected_domain)
+      });
+      // Provide a more specific error message
+      if (!response.data.columns) {
+        setUploadStatus('Error: No columns detected in file');
+      } else if (!response.data.detected_domain) {
+        setUploadStatus('Error: No domain detected (falling back to "others")');
+        // Still set available data and use "others" as fallback
+        setColumns(response.data.columns);
+        setDetectedDomain('others');
+        setAvailableDomains(response.data.all_domains || []);
+        setSelectedDomain('others');
+        setData(response.data.data);
+      } else {
+        setUploadStatus('Error: Unexpected response format');
+      }
     }
   } catch (error) {
-    setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
     console.error('Error uploading file:', error);
+    console.error('Error response:', error.response?.data);
+    setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
   } finally {
     setIsLoading(false);
   }
