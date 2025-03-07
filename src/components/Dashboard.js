@@ -23,42 +23,46 @@ function App() {
     setUploadStatus('');
   };
 
-  const handleFileUpload = async () => {
-    if (!file) {
-      setUploadStatus('Please select a file first');
-      return;
+const handleFileUpload = async () => {
+  if (!file) {
+    setUploadStatus('Please select a file first');
+    return;
+  }
+
+  setIsLoading(true);
+  setUploadStatus('Uploading file...');
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await axios.post('https://analyser-backend-3ija.onrender.com/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    if (response.data.columns) {
+      setColumns(response.data.columns);
+      // Ensure a domain is always set, defaulting to 'others' if none provided
+      const domain = response.data.detected_domain || 'others';
+      setDetectedDomain(domain);
+      setAvailableDomains(response.data.all_domains || []);
+      setSelectedDomain(domain);
+      setData(response.data.data);
+      console.log('Detected Columns:', response.data.columns);
+      // Add logging for domain detection
+      console.log('Detected Domain:', domain);
+      console.log('Domain Scores:', response.data.domain_scores);
+      setUploadStatus('File uploaded successfully!');
+    } else {
+      setUploadStatus('Error: No columns detected in file');
+      console.error('No columns in response:', response.data);
     }
-
-    setIsLoading(true);
-    setUploadStatus('Uploading file...');
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.post('https://analyser-backend-3ija.onrender.com/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      if (response.data.columns && response.data.detected_domain) {
-        setColumns(response.data.columns);
-        setDetectedDomain(response.data.detected_domain);
-        setAvailableDomains(response.data.all_domains);
-        setSelectedDomain(response.data.detected_domain);
-        setData(response.data.data);
-        console.log('Detected Columns:', response.data.columns);
-        // setInsightsEnabled(response.data.insights_button_enabled);
-        // setDomainInsightsAvailable(response.data.domain_insights_available);
-        setUploadStatus('File uploaded successfully!');
-      } else {
-        setUploadStatus('Error: No domain detected');
-      }
-    } catch (error) {
-      setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
-      console.error('Error uploading file:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  } catch (error) {
+    setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
+    console.error('Error uploading file:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleDomainConfirm = async () => {
     setGeneratingVisuals(true);
