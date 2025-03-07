@@ -39,42 +39,32 @@ const handleFileUpload = async () => {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    // Log the entire response for debugging
     console.log('Complete response data:', response.data);
     
-    // Check what properties are available
-    console.log('Response has columns?', Boolean(response.data.columns));
-    console.log('Response has detected_domain?', Boolean(response.data.detected_domain));
-    console.log('Detected domain value:', response.data.detected_domain);
-
-    if (response.data.columns && response.data.detected_domain) {
+    // Check for columns - this is available
+    if (response.data.columns) {
       setColumns(response.data.columns);
-      setDetectedDomain(response.data.detected_domain);
+      
+      // Try different possible field names for domain
+      // Check for detected_domain first, then fallback to other possible names
+      let domainValue = response.data.detected_domain;
+      if (!domainValue) {
+        // Try alternate field names that might contain the domain
+        domainValue = response.data.domain || 
+                     (response.data.domain_scores ? Object.keys(response.data.domain_scores)[0] : null) || 
+                     'others';
+        console.log('Using fallback domain:', domainValue);
+      }
+      
+      setDetectedDomain(domainValue);
       setAvailableDomains(response.data.all_domains || []);
-      setSelectedDomain(response.data.detected_domain);
+      setSelectedDomain(domainValue);
       setData(response.data.data);
-      console.log('Detected Columns:', response.data.columns);
-      console.log('Selected Domain:', response.data.detected_domain);
+      
+      console.log('Using domain:', domainValue);
       setUploadStatus('File uploaded successfully!');
     } else {
-      console.error('Missing expected data in response:', {
-        hasColumns: Boolean(response.data.columns),
-        hasDetectedDomain: Boolean(response.data.detected_domain)
-      });
-      // Provide a more specific error message
-      if (!response.data.columns) {
-        setUploadStatus('Error: No columns detected in file');
-      } else if (!response.data.detected_domain) {
-        setUploadStatus('Error: No domain detected (falling back to "others")');
-        // Still set available data and use "others" as fallback
-        setColumns(response.data.columns);
-        setDetectedDomain('others');
-        setAvailableDomains(response.data.all_domains || []);
-        setSelectedDomain('others');
-        setData(response.data.data);
-      } else {
-        setUploadStatus('Error: Unexpected response format');
-      }
+      setUploadStatus('Error: No columns detected in file');
     }
   } catch (error) {
     console.error('Error uploading file:', error);
