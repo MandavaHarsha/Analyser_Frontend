@@ -18,78 +18,68 @@ function App() {
   // const [insightsEnabled, setInsightsEnabled] = useState(false);
 
 
-  const handleFileChange = (e) => {
+ const handleFileChange = (e) => {
     setFile(e.target.files[0]);
     setUploadStatus('');
   };
 
-const handleFileUpload = async () => {
-  if (!file) {
-    setUploadStatus('Please select a file first');
-    return;
-  }
-
-  setIsLoading(true);
-  setUploadStatus('Uploading file...');
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    const response = await axios.post('https://analyser-backend-3ija.onrender.com/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    console.log('Complete response data:', response.data);
-    
-    // Check for columns - this is available
-    if (response.data.columns) {
-      setColumns(response.data.columns);
-      
-      // Try different possible field names for domain
-      // Check for detected_domain first, then fallback to other possible names
-      let domainValue = response.data.detected_domain;
-      if (!domainValue) {
-        // Try alternate field names that might contain the domain
-        domainValue = response.data.domain || 
-                     (response.data.domain_scores ? Object.keys(response.data.domain_scores)[0] : null) || 
-                     'others';
-        console.log('Using fallback domain:', domainValue);
-      }
-      
-      setDetectedDomain(domainValue);
-      setAvailableDomains(response.data.all_domains || []);
-      setSelectedDomain(domainValue);
-      setData(response.data.data);
-      
-      console.log('Using domain:', domainValue);
-      setUploadStatus('File uploaded successfully!');
-    } else {
-      setUploadStatus('Error: No columns detected in file');
+  const handleFileUpload = async () => {
+    if (!file) {
+      setUploadStatus('Please select a file first');
+      return;
     }
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    console.error('Error response:', error.response?.data);
-    setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+    setUploadStatus('Uploading file...');
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const response = await axios.post('https://analyser-backend-3ija.onrender.com/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('Complete response data:', response.data);
+      
+      if (response.data.columns) {
+        setColumns(response.data.columns);
+        
+        let domainValue = response.data.detected_domain;
+        if (!domainValue) {
+          domainValue = response.data.domain || 
+                       (response.data.domain_scores ? Object.keys(response.data.domain_scores)[0] : null) || 
+                       'others';
+          console.log('Using fallback domain:', domainValue);
+        }
+        
+        setDetectedDomain(domainValue);
+        setAvailableDomains(response.data.all_domains || []);
+        setSelectedDomain(domainValue);
+        setData(response.data.data);
+        
+        console.log('Using domain:', domainValue);
+        setUploadStatus('File uploaded successfully!');
+      } else {
+        setUploadStatus('Error: No columns detected in file');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      console.error('Error response:', error.response?.data);
+      setUploadStatus(`Error: ${error.response?.data?.error || 'Upload failed'}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDomainConfirm = async () => {
     setGeneratingVisuals(true);
     setInsights([]);
     setVisualizations([]);
-
     try {
       const response = await axios.post('https://analyser-backend-3ija.onrender.com/insights', {
         domain: selectedDomain,
         data: data,
       });
-
       if (response.data.insights) {
         setInsights(response.data.insights);
       }
-
       if (response.data.visualizations) {
         setVisualizations(response.data.visualizations);
       }
@@ -100,6 +90,7 @@ const handleFileUpload = async () => {
       setGeneratingVisuals(false);
     }
   };
+
 
   return (
     <div className="container">
