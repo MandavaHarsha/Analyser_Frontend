@@ -68,29 +68,56 @@ function App() {
     }
   };
 
-  const handleDomainConfirm = async () => {
-    setGeneratingVisuals(true);
-    setInsights([]);
-    setVisualizations([]);
-    try {
-      const response = await axios.post('https://analyser-backend-3ija.onrender.com/insights', {
-        domain: selectedDomain,
-        data: data,
-      });
-      if (response.data.insights) {
-        setInsights(response.data.insights);
-      }
-      if (response.data.visualizations) {
-        setVisualizations(response.data.visualizations);
-      }
-    } catch (error) {
-      console.error('Error generating insights:', error);
-      setUploadStatus('Error generating insights and visualizations');
-    } finally {
-      setGeneratingVisuals(false);
+const handleDomainConfirm = async () => {
+  setGeneratingVisuals(true);
+  setInsights([]);
+  setVisualizations([]);
+  console.log(`Generating insights using domain: ${selectedDomain}`);
+  
+  try {
+    const response = await axios.post('https://analyser-backend-3ija.onrender.com/insights', {
+      domain: selectedDomain,
+      data: data,
+    }, {
+      // Add timeout to prevent long-hanging requests
+      timeout: 60000,
+    });
+    
+    console.log("Insights response received:", response.status);
+    
+    if (response.data.insights) {
+      setInsights(response.data.insights);
+    } else {
+      setInsights(["No insights available"]);
     }
-  };
-
+    
+    if (response.data.visualizations) {
+      setVisualizations(response.data.visualizations);
+    } else {
+      console.log("No visualizations received in response");
+    }
+    
+  } catch (error) {
+    console.error('Error generating insights:', error);
+    
+    // Create user-friendly error message
+    let errorMessage = 'Error generating insights and visualizations';
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      errorMessage = `Server error: ${error.response.data.error || error.response.status}`;
+      console.log('Error response data:', error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      errorMessage = 'No response from server. Please check your connection.';
+    }
+    
+    setUploadStatus(errorMessage);
+    setInsights([`Analysis failed: ${errorMessage}`]);
+    
+  } finally {
+    setGeneratingVisuals(false);
+  }
+};
 
   return (
     <div className="container">
